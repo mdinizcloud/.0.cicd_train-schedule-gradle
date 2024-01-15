@@ -22,6 +22,7 @@ plugins {
 // to download and install node.js and npm locally, for this particular project. It ensures that
 // those are installed during the build, but not system-wide, just within this directory.
 node {
+  version = '9.11.2'
   download = true
 }
 
@@ -70,6 +71,5 @@ build.dependsOn npm_build
 // Here, we want to make sure our zip task runs after npm_build    
           zip.dependsOn npm_build
 
-npm_build.dependsOn npmInstall
 npm_build.dependsOn npm_test
 npm_test.dependsOn npmInstall
