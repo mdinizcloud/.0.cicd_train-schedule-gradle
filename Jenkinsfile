@@ -32,7 +32,7 @@ pipeline {
                                 verbose: false,
                                 sshCredentials: [
                                     username: "$USERNAME",
-                                    encryptedPassphrase: "$PASSWORD"
+                                    encryptedPassphrase: '$PASSWORD'
                                 ], 
                                 transfers: [
                                     sshTransfer(
