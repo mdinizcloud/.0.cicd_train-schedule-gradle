@@ -11,7 +11,7 @@ pipeline {
 
         stage('DeployToStaging') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
