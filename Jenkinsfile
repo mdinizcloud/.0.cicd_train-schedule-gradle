@@ -33,7 +33,8 @@ pipeline {
             }
             steps {
                 // echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                sh 'printenv'
+                // sh 'printenv'
+                sh 'echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"'
             }
         }
     
