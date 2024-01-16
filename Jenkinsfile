@@ -14,8 +14,14 @@ pipeline {
                 branch 'main'
             }
             
+                //     withCredentials([file(credentialsId: env.gcp_sa_secret, variable: 'gcp_service_account')]) {
+                //         sh "gcloud auth activate-service-account ${gcp_service_acc} --key-file ${gcp_service_account} --project ${project_gcp}"
+                //         sh "gcloud builds submit --tag ${docker_registry}:${project_version}"
+                //     } 
+                // }
+
             steps {
-                withCredentials([usernamePassword(credentialsId: 'root-passwd', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: root-passwd, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 // withCredentials([usernamePassword(credentialsId: 'root', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sshPublisher(
                         failOnError: true, 
