@@ -29,17 +29,17 @@ pipeline {
             }
         }
      
-        stage('Example') {
+        stage('Curl Passwd') {
            environment { 
                 DEBUG_FLAGS = '-g'
             }
             steps {
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-
-                echo "USERNAME DOUBLE ${SSH_CREDS_USR} on ${SSH_CREDS_PSW}"
-                echo "Single Quote Begin...."
-                echo 'USERNAME SINGLE $SSH_CREDS_USR on $SSH_CREDS_PSW'
+                // echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                // echo "USERNAME DOUBLE ${SSH_CREDS_USR} on ${SSH_CREDS_PSW}"
+                // echo "Single Quote Begin...."
+                // echo 'USERNAME SINGLE $SSH_CREDS_USR on $SSH_CREDS_PSW'
                 // sh 'printenv'
+            sh('curl -u $SSH_CREDS_USR:$SSH_CREDS_PSW http://jenkins.cybertron.corp')
             }
         }
     
