@@ -39,7 +39,8 @@ pipeline {
                 // echo "Single Quote Begin...."
                 // echo 'USERNAME SINGLE $SSH_CREDS_USR on $SSH_CREDS_PSW'
                 // sh 'printenv'
-            sh('curl -u $JENKINS_CREDS_USR:$JENKINS_CREDS_PSW http://jenkins.cybertron.corp')
+            // sh('curl -u $JENKINS_CREDS_USR:$JENKINS_CREDS_PSW http://jenkins.cybertron.corp')
+            sh('echo $JENKINS_CREDS_USR and $JENKINS_CREDS_PSW')
             }
         }
     
