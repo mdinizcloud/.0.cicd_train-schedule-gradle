@@ -1,3 +1,6 @@
 git update-index --chmod=+x gradlew
 
-#t
+
+$SSH_CREDS 
+$SSH_CREDS_USR
+$SSH_CREDS_PWD

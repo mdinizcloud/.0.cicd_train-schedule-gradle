@@ -3,6 +3,8 @@ pipeline {
 
     environment { 
         CC = 'clang'
+        SSH_CREDS = credentials('root-k8s-control-plane')
+
     }
 
     stages {
@@ -32,9 +34,8 @@ pipeline {
                 DEBUG_FLAGS = '-g'
             }
             steps {
-                // echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 // sh 'printenv'
-                sh 'echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"'
             }
         }
     
