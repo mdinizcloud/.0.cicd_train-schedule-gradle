@@ -34,11 +34,15 @@ pipeline {
                 DEBUG_FLAGS = '-g'
             }
             steps {
-                // echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                echo "USERNAME DOUBLE ${SSH_CREDS_USR} on ${SSH_CREDS_PSW}"
-                // echo "Single Quote Begin...."
-                // sh 'printenv'
+            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} ${CC}"
+
+            //wrong_way_for_credentials    
+            // echo "USERNAME DOUBLE ${SSH_CREDS_USR} on ${SSH_CREDS_PSW}"
+            
+            // sh 'printenv'
+            
             // sh('curl -u $JENKINS_CREDS_USR:$JENKINS_CREDS_PSW http://jenkins.cybertron.corp')
+            
             // sh('echo $JENKINS_CREDS_USR and $JENKINS_CREDS_PSW')
             }
         }
