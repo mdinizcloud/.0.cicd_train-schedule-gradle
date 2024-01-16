@@ -21,7 +21,7 @@ pipeline {
                 // }
 
             steps {
-                withCredentials([usernamePassword(credentialsId: root-passwd, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'root-passwd', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 // withCredentials([usernamePassword(credentialsId: 'root', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sshPublisher(
                         failOnError: true, 
@@ -31,8 +31,8 @@ pipeline {
                                 configName: 'staging',
                                 verbose: false,
                                 sshCredentials: [
-                                    username: '$USERNAME',
-                                    encryptedPassphrase: '$PASSWORD'
+                                    username: '${USERNAME}',
+                                    encryptedPassphrase: '${PASSWORD}'
                                 ], 
                                 transfers: [
                                     sshTransfer(
