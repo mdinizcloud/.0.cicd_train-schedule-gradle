@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment { 
+        CC = 'clang'
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -24,8 +28,12 @@ pipeline {
         }
      
         stage('Example') {
+           environment { 
+                DEBUG_FLAGS = '-g'
+            }
             steps {
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                // echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                sh 'printenv'
             }
         }
     
