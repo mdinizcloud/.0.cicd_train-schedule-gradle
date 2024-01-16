@@ -15,7 +15,8 @@ pipeline {
             }
             
             steps {
-                withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                // withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'root', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sshPublisher(
                         failOnError: true, 
                         continueOnError: false,
