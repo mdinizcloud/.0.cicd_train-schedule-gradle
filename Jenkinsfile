@@ -1,51 +1,136 @@
 pipeline {
     agent any
-
-    environment { 
-        CC = 'clang'
-        SSH_CREDS = credentials('root-k8s-control-plane')
-        JENKINS_CREDS = credentials('jenkins-admin')
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                echo 'Running build automation'
+                sh './gradlew build --no-daemon'
+                archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-          when {
-              expression {
-                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-              }
-           }
-            steps {
-                echo 'Deploying....'
-            }
-        }
-     
-        stage('Curl Passwd') {
-           environment { 
-                DEBUG_FLAGS = '-g'
-            }
-            steps {
-            echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} ${CC}"
 
-            //wrong_way_for_credentials    
-            // echo "USERNAME DOUBLE ${SSH_CREDS_USR} on ${SSH_CREDS_PSW}"
+        stage('DeployToStaging') {
+            when {
+                branch 'main'
+            }
             
-            // sh 'printenv'
-            
-            // sh('curl -u $JENKINS_CREDS_USR:$JENKINS_CREDS_PSW http://jenkins.cybertron.corp')
-            
-            // sh('echo $JENKINS_CREDS_USR and $JENKINS_CREDS_PSW')
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sshPublisher(
+                        failOnError: true, 
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'staging',
+                                verbose: false,
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$PASSWORD"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'dist/trainSchedule.zip',
+                                        removePrefix: 'dist/',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'sudo /usr/bin/systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo /usr/bin/systemctl start train-schedule'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
             }
         }
-    
+        
+
+
+//     stage('SSH transfer') {
+//         steps([$class: 'BapSshPromotionPublisherPlugin']) {
+//             sshPublisher(
+//                 continueOnError: false, failOnError: true,
+//                 publishers: [
+//                     sshPublisherDesc(
+//                         configName: "kubernetes_master",
+//                         verbose: true,
+//                         transfers: [
+//                             sshTransfer(execCommand: "/bin/rm -rf /opt/deploy/helm"),
+//                             sshTransfer(sourceFiles: "helm/**",)
+//                         ]
+//                     )
+//                 ]
+//             )
+//         }
+//     }
+
+
+//    stage('Publish over ssh plugin in pipeline') {
+//             steps([$class: 'BapSshPromotionPublisherPlugin']) {
+//                 script {
+//                     List SERVERS_LIST = ["Server_1", "Server_2"]
+//                     for(cr_server in SERVERS_LIST){
+//                         sshPublisher(
+//                             publishers: [
+//                                 sshPublisherDesc(
+//                                     configName: cr_server, 
+//                                     transfers: [
+//                                         sshTransfer(
+//                                             cleanRemote: false, 
+//                                             excludes: '', 
+//                                             execCommand: '', 
+//                                             execTimeout: 120000, 
+//                                             flatten: false, 
+//                                             makeEmptyDirs: false, 
+//                                             noDefaultExcludes: false, 
+//                                             patternSeparator: '[, ]+', 
+//                                             remoteDirectory: '', 
+//                                             remoteDirectorySDF: false, 
+//                                             removePrefix: '', 
+//                                             sourceFiles: '**/*'
+//                                         )
+//                                     ], 
+//                                     usePromotionTimestamp: false, 
+//                                     useWorkspaceInPromotion: false, 
+//                                     verbose: false
+//                                 )
+//                             ]
+//                         )
+//                     }
+//                 }
+//             }
+//         } 
+
+
+        // stage('DeployToProduction') {
+        //     when {
+        //         branch 'master'
+        //     }
+        //     steps {
+        //         input 'Does the staging environment look OK?'
+        //         milestone(1)
+        //         withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+        //             sshPublisher(
+        //                 failOnError: true,
+        //                 continueOnError: false,
+        //                 publishers: [
+        //                     sshPublisherDesc(
+        //                         configName: 'production',
+        //                         sshCredentials: [
+        //                             username: "$USERNAME",
+        //                             encryptedPassphrase: "$USERPASS"
+        //                         ], 
+        //                         transfers: [
+        //                             sshTransfer(
+        //                                 sourceFiles: 'dist/trainSchedule.zip',
+        //                                 removePrefix: 'dist/',
+        //                                 remoteDirectory: '/tmp',
+        //                                 execCommand: 'sudo /usr/bin/systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip /tmp/trainSchedule.zip -d /opt/train-schedule && sudo /usr/bin/systemctl start train-schedule'
+        //                             )
+        //                         ]
+        //                     )
+        //                 ]
+        //             )
+        //         }
+        //     }
+        // }
     }
 }

@@ -15,16 +15,17 @@ pipeline {
             }
             
             steps {
-                withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'root-k8s-control-plane', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sshPublisher(
-                        failOnError: true,
+                        failOnError: true, 
                         continueOnError: false,
                         publishers: [
                             sshPublisherDesc(
                                 configName: 'staging',
+                                verbose: false,
                                 sshCredentials: [
                                     username: "$USERNAME",
-                                    encryptedPassphrase: "$USERPASS"
+                                    encryptedPassphrase: "$PASSWORD"
                                 ], 
                                 transfers: [
                                     sshTransfer(
@@ -41,6 +42,64 @@ pipeline {
             }
         }
         
+
+
+//     stage('SSH transfer') {
+//         steps([$class: 'BapSshPromotionPublisherPlugin']) {
+//             sshPublisher(
+//                 continueOnError: false, failOnError: true,
+//                 publishers: [
+//                     sshPublisherDesc(
+//                         configName: "kubernetes_master",
+//                         verbose: true,
+//                         transfers: [
+//                             sshTransfer(execCommand: "/bin/rm -rf /opt/deploy/helm"),
+//                             sshTransfer(sourceFiles: "helm/**",)
+//                         ]
+//                     )
+//                 ]
+//             )
+//         }
+//     }
+
+
+//    stage('Publish over ssh plugin in pipeline') {
+//             steps([$class: 'BapSshPromotionPublisherPlugin']) {
+//                 script {
+//                     List SERVERS_LIST = ["Server_1", "Server_2"]
+//                     for(cr_server in SERVERS_LIST){
+//                         sshPublisher(
+//                             publishers: [
+//                                 sshPublisherDesc(
+//                                     configName: cr_server, 
+//                                     transfers: [
+//                                         sshTransfer(
+//                                             cleanRemote: false, 
+//                                             excludes: '', 
+//                                             execCommand: '', 
+//                                             execTimeout: 120000, 
+//                                             flatten: false, 
+//                                             makeEmptyDirs: false, 
+//                                             noDefaultExcludes: false, 
+//                                             patternSeparator: '[, ]+', 
+//                                             remoteDirectory: '', 
+//                                             remoteDirectorySDF: false, 
+//                                             removePrefix: '', 
+//                                             sourceFiles: '**/*'
+//                                         )
+//                                     ], 
+//                                     usePromotionTimestamp: false, 
+//                                     useWorkspaceInPromotion: false, 
+//                                     verbose: false
+//                                 )
+//                             ]
+//                         )
+//                     }
+//                 }
+//             }
+//         } 
+
+
         // stage('DeployToProduction') {
         //     when {
         //         branch 'master'
